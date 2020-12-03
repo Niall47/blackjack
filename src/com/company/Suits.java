@@ -1,5 +1,5 @@
 package com.company;
 
 enum Suits {
-    CLUBS, DIAMONDS, HEARTS, SPADES;
+    SPADES, DIAMONDS, CLUBS, HEARTS;
 }

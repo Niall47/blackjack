@@ -1,15 +1,19 @@
 package com.company;
 
 public class Card{
-    private final Object faceValue;
-    private final Object suit;
+    private final Values faceValue;
+    private final Suits suit;
 
-    public Card(Values value, Enum<Suits> suit) {
+    public Card(Values value, Suits suit) {
         this.faceValue = value;
         this.suit = suit;
     }
 
-    public String toString() {
-        return faceValue + " of " + suit;
+    public Values getFaceValue() {
+        return faceValue;
+    }
+
+    public String toString(){
+        return (faceValue.toString() + " of " + suit.toString());
     }
 }
