@@ -1,5 +1,7 @@
 package com.company;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -7,32 +9,34 @@ import java.util.Scanner;
  * Controls the deck and tracks player hands and scores
  */
 public class Game {
-    private Player[] players;
+    private List<Player> players;
     private Deck deck;
+    private Player dealer;
 
     public Game(String player1) {
         this.deck = new Deck();
-        this.players = new Player[2];
-        players[0] = new Player("Dealer");
-        players[1] = new Player(player1);
+        this.players = new ArrayList<>();
+        this.dealer = new Player("Dealer");
+        players.add(new Player(player1));
     }
 
     public void startGame() {
         System.out.println("Starting Game...");
         deck.shuffle();
         playHand();
-        checkScore();
-        while (doesDealerDraw()){
-            System.out.println("Dealer takes another card");
-            deal(players[0]);
-        }
-        checkScore();
-        showResults(players[0]);
-        for (Player player : players){
-            if (!(player.getName().startsWith("Dealer"))){
-                System.out.println("Offering " + player.getName() + " a choice (currently at: " + player.getHandValue() + ")");
-                while (anotherCard()){
-                    deal(player);
+        while(!gameOver()){
+            if (doesDealerDraw()){
+                System.out.println("Dealer takes another card");
+                deal(dealer);
+            }
+            showResults(dealer);
+            for (Player player : players){
+                while (!gameOver() && !bust(player)){
+                    if (anotherCard(player)){
+                        deal(player);
+                    } else {
+                        break;
+                    }
                 }
                 showResults(player);
             }
@@ -40,6 +44,9 @@ public class Game {
     }
 
     private void playHand(){
+        deal(dealer);
+        deal(dealer);
+        showResults(dealer);
         for (Player player : players) {
             deal(player);
             deal(player);
@@ -47,8 +54,18 @@ public class Game {
         }
     }
 
+    private boolean gameOver() {
+        boolean bust = false;
+        if (bust(dealer)) bust = true;
+//        This wants to be rewritten when we start having more than one player
+        for (Player player : players){
+            if (bust(player)) bust = true;
+        }
+        return bust;
+    }
+
     private boolean doesDealerDraw() {
-        return (players[0].getHandValue() <= 17);
+        return (dealer.getHandValue() <= 17);
     }
     private void showResults(Player player) {
         if (bust(player)){
@@ -65,11 +82,8 @@ public class Game {
         boolean ace = false;
         if (player.getHandValue() == 21){
             for (Card card : player.getHand()) {
-                if (card.getValue() == Values.JACK) {
-                    jack = true;
-                } else if (card.getValue() == Values.ACE){
-                    ace = true;
-                }
+                if (card.getValue() == Values.JACK) jack = true;
+                else if (card.getValue() == Values.ACE) ace = true;
             }
         }
         return (ace && jack);
@@ -79,26 +93,19 @@ public class Game {
         player.addCard(deck.takeCard());
     }
 
-    private void checkScore(){
-        for (Player player: players) {
-            player.getHandValue();
-        }
-    }
-
     private boolean bust(Player player) {
         return (player.getHandValue() > 21);
     }
 
-    private boolean anotherCard(){
-        System.out.println("Stick or Twist?");
-        System.out.println("'S' or 'T");
+    private boolean anotherCard(Player player){
+        System.out.println(player.getName() + " is at " + player.getHandValue() + " with " + player.getHand().size() + " cards");
+        System.out.println("Stick or Twist? (use 's' or 't'");
         String response = "";
         Scanner myObj = new Scanner(System.in);
         while (!validResponse(response)){
             response = myObj.nextLine();
         }
         return response.toLowerCase().startsWith("t");
-
     }
 
     private boolean validResponse(String input){

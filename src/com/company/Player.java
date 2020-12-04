@@ -34,7 +34,9 @@ public class Player{
                 handValue += card.getValue().getPointValue();
             }
         }
-        if (ace && handValue <= 10) {
+        if (ace && handValue == 10){
+            handValue = 21;
+        }else if (ace && handValue < 10) {
             handValue += 10;
         }
         return handValue;
