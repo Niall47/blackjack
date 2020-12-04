@@ -24,31 +24,53 @@ public class Game {
         checkScore();
     }
 
-    public void playHand(){
+    private void playHand(){
         for (Player player : players) {
             deal(player);
             deal(player);
-            if (bust(player)){
-                System.out.println(player.getName() + " bust out with" + player.getHandValue());
-                break;
-            } else{
-                System.out.println(player.getName() + " scored " + player.getHandValue());
-            }
+            showResults(player);
         }
-
     }
 
-    public void deal(Player player) {
+    private void showResults(Player player) {
+        if (bust(player)){
+            System.out.println(player.getName() + " bust out with" + player.getHandValue());
+        }else if (blackJack(player)) {
+            System.out.println(player.getName() + " got a BlackJack");
+        }
+        else{
+            System.out.println(player.getName() + " scored " + player.getHandValue());
+        }
+    }
+
+    private boolean blackJack(Player player){
+        boolean jack = false;
+        boolean ace = false;
+        if (player.getHandValue() == 21){
+            for (Card card : player.getHand()) {
+                if (card != null) {
+                    if (card.getFaceValue() == Values.JACK) {
+                        jack = true;
+                    } else if (card.getFaceValue() == Values.ACE){
+                        ace = true;
+                    }
+                }
+            }
+        }
+        return (ace && jack);
+    }
+
+    private void deal(Player player) {
         player.addCard(deck.takeCard());
     }
 
-    public void checkScore(){
+    private void checkScore(){
         for (Player player: players) {
             player.getHandValue();
         }
     }
 
-    public boolean bust(Player player) {
+    private boolean bust(Player player) {
         return (player.getHandValue() > 21);
     }
 

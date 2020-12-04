@@ -22,9 +22,16 @@ public class Player{
 
     public int getHandValue() {
         handValue = 0;
+        boolean ace =  false;
         for (Card card : hand) {
             if (card != null) {
+                if (card.getFaceValue() == Values.ACE) {
+                    ace = true;
+                }
                 handValue += card.getFaceValue().getPointValue();
+            }
+            if (ace && handValue <= 10) {
+                handValue += 10;
             }
         }
         return handValue;
