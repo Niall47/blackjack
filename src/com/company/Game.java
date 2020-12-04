@@ -22,6 +22,21 @@ public class Game {
         deck.shuffle();
         playHand();
         checkScore();
+        while (doesDealerDraw()){
+            System.out.println("Dealer takes another card");
+            deal(players[0]);
+        }
+        checkScore();
+        showResults(players[0]);
+        for (Player player : players){
+            if (!(player.getName().startsWith("Dealer"))){
+                System.out.println("Offering " + player.getName() + " a choice (currently at: " + player.getHandValue() + ")");
+                while (anotherCard()){
+                    deal(player);
+                }
+                showResults(player);
+            }
+        }
     }
 
     private void playHand(){
@@ -32,13 +47,15 @@ public class Game {
         }
     }
 
+    private boolean doesDealerDraw() {
+        return (players[0].getHandValue() <= 17);
+    }
     private void showResults(Player player) {
         if (bust(player)){
-            System.out.println(player.getName() + " bust out with" + player.getHandValue());
+            System.out.println(player.getName() + " bust out with " + player.getHandValue());
         }else if (blackJack(player)) {
             System.out.println(player.getName() + " got a BlackJack");
-        }
-        else{
+        } else {
             System.out.println(player.getName() + " scored " + player.getHandValue());
         }
     }
@@ -48,12 +65,10 @@ public class Game {
         boolean ace = false;
         if (player.getHandValue() == 21){
             for (Card card : player.getHand()) {
-                if (card != null) {
-                    if (card.getFaceValue() == Values.JACK) {
-                        jack = true;
-                    } else if (card.getFaceValue() == Values.ACE){
-                        ace = true;
-                    }
+                if (card.getValue() == Values.JACK) {
+                    jack = true;
+                } else if (card.getValue() == Values.ACE){
+                    ace = true;
                 }
             }
         }

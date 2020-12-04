@@ -1,14 +1,17 @@
 package com.company;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Player{
     private String name;
-    private Card[] hand;
+    private List<Card> hand;
     private int handValue;
 
 
     public Player(String name) {
         this.name = name;
-        this.hand = new Card[6];
+        this.hand = new ArrayList<>();
         this.handValue = 0;
     }
 
@@ -16,7 +19,7 @@ public class Player{
         return name;
     }
 
-    public Card[] getHand() {
+    public List<Card> getHand() {
         return hand;
     }
 
@@ -25,25 +28,20 @@ public class Player{
         boolean ace =  false;
         for (Card card : hand) {
             if (card != null) {
-                if (card.getFaceValue() == Values.ACE) {
+                if (card.getValue() == Values.ACE) {
                     ace = true;
                 }
-                handValue += card.getFaceValue().getPointValue();
+                handValue += card.getValue().getPointValue();
             }
-            if (ace && handValue <= 10) {
-                handValue += 10;
-            }
+        }
+        if (ace && handValue <= 10) {
+            handValue += 10;
         }
         return handValue;
     }
 
     public void addCard(Card card){
-        for (int i = 0; i < hand.length; i++){
-            if (hand[i] == null) {
-                hand[i] = card;
-                break;
-            }
-        }
+        hand.add(card);
         System.out.println(name + " got " + card.toString());
     }
 }

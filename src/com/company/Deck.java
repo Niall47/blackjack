@@ -41,8 +41,6 @@ public class Deck {
      * Removes the top-most card from the deck and returns it
      */
     public Card takeCard(){
-        Card card = deck.get(0);
-        deck.removeElementAt(0);
-        return card;
+        return deck.pop();
     }
 }

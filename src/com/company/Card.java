@@ -1,19 +1,20 @@
 package com.company;
 
 public class Card{
-    private final Values faceValue;
+    private final Values value;
     private final Suits suit;
 
     public Card(Values value, Suits suit) {
-        this.faceValue = value;
+        this.value = value;
         this.suit = suit;
     }
 
-    public Values getFaceValue() {
-        return faceValue;
+    public Values getValue() {
+        return value;
     }
 
+    @Override
     public String toString(){
-        return (faceValue.toString() + " of " + suit.toString());
+        return (value.toString() + " of " + suit.toString());
     }
 }
