@@ -24,21 +24,40 @@ public class Game {
         System.out.println("Starting Game...");
         deck.shuffle();
         playHand();
-        while(!gameOver()){
-            if (doesDealerDraw()){
-                System.out.println("Dealer takes another card");
-                deal(dealer);
-            }
-            showResults(dealer);
+        while(!gameOver() && !bust(dealer) && !dealer.out){
             for (Player player : players){
-                while (!gameOver() && !bust(player)){
-                    if (anotherCard(player)){
+                while (!gameOver() || !bust(player) || !player.out){
+                    if (!player.out  && player.getHandValue() < 21 && anotherCard(player)){
                         deal(player);
                     } else {
+                        player.out = true;
+                        break;
+                    }
+                    if (gameOver() || bust(player)) {
+                        player.out = true;
                         break;
                     }
                 }
                 showResults(player);
+            }
+            if (doesDealerDraw()){
+                System.out.println("Dealer takes another card");
+                deal(dealer);
+                if (bust(dealer)) {dealer.out = true;}
+            } else {
+                dealer.out = true;
+            }
+            showResults(dealer);
+        }
+        announceWinner();
+    }
+
+    private void announceWinner(){
+        for (Player player : players) {
+            if (!bust(dealer) && (dealer.getHandValue() > player.getHandValue())) {
+                System.out.println(dealer.getName() + " wins with " + dealer.getHandValue());
+            } else if (!bust(player) && player.getHandValue() > dealer.getHandValue()) {
+                System.out.println(player.getName() + " wins with " + player.getHandValue());
             }
         }
     }
@@ -55,13 +74,13 @@ public class Game {
     }
 
     private boolean gameOver() {
-        boolean bust = false;
-        if (bust(dealer)) bust = true;
-//        This wants to be rewritten when we start having more than one player
+        boolean gg = false;
         for (Player player : players){
-            if (bust(player)) bust = true;
+            if ((bust(player) || player.out) && (bust(dealer)) || dealer.out) {
+                gg = true;
+            }
         }
-        return bust;
+        return gg;
     }
 
     private boolean doesDealerDraw() {
@@ -98,6 +117,7 @@ public class Game {
     }
 
     private boolean anotherCard(Player player){
+        boolean answer = false;
         System.out.println(player.getName() + " is at " + player.getHandValue() + " with " + player.getHand().size() + " cards");
         System.out.println("Stick or Twist? (use 's' or 't'");
         String response = "";
@@ -105,7 +125,13 @@ public class Game {
         while (!validResponse(response)){
             response = myObj.nextLine();
         }
-        return response.toLowerCase().startsWith("t");
+        if (response.toLowerCase().startsWith("t")){
+            answer = true;
+        } else {
+            answer = false;
+            player.out = true;
+        }
+        return answer;
     }
 
     private boolean validResponse(String input){
