@@ -13,11 +13,13 @@ public class Game {
     private Deck deck;
     private Player dealer;
 
-    public Game(String player1) {
+    public Game(ArrayList<String> playersToAdd) {
         this.deck = new Deck();
         this.players = new ArrayList<>();
         this.dealer = new Player("Dealer");
-        players.add(new Player(player1));
+        for (String player : playersToAdd){
+            players.add(new Player(player));
+        }
     }
 
     public void startGame() {
@@ -120,8 +122,8 @@ public class Game {
         boolean answer = false;
         System.out.println(player.getName() + " is at " + player.getHandValue() + " with " + player.getHand().size() + " cards");
         System.out.println("Stick or Twist? (use 's' or 't'");
-        String response = "";
         Scanner myObj = new Scanner(System.in);
+        String response = "";
         while (!validResponse(response)){
             response = myObj.nextLine();
         }
